@@ -1,0 +1,17 @@
+{% extends "blog/base.html" %}
+
+{% block title %}{{ news_post.title }}{% endblock %}
+{% block content %}
+
+<h1>{{ news_post.title }}</h1>
+{% if news_post.picture %}
+    <img src="{{ news_post.picture.url }}" alt="{{ news_post.title }}" style="max-width: 500px;">
+{% endif %}
+<p>{{ news_post.content }}</p>
+<p>Created at: {{ news_post.created_at }}</p>
+
+<a href="{% url 'news_home' %}">Back to News</a>
+<a href="{% url 'edit_news_post' news_post.id %}">Edit</a>
+<a href="{% url 'delete_news_post' news_post.id %}">Delete</a>
+
+{% endblock %}

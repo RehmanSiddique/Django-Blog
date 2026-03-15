@@ -14,4 +14,7 @@ urlpatterns = [
     path("post/edit/<int:id>/", views.edit_post, name="edit_post"),
     # Delete Post Url
     path("post/delete/<int:id>/", views.delete_post, name="delete_post"),
+    
+    # Register User
+    path("register/",views.register, name="register")
 ]

@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
+from django.contrib import messages
 
 # Create your views here.
 
@@ -72,6 +73,9 @@ class CreateNewsPostView(LoginRequiredMixin, CreateView):
     form_class = NewsPostForm
     template_name = 'news/create_news_post.html'
     success_url = reverse_lazy('news_home')
+    def form_valid(self, form):
+        messages.success(self.request, "Post Created Successfully")
+        return super().form_valid(form)
 
 class EditNewsPostView(LoginRequiredMixin, UpdateView):
     model = NewsPost
@@ -79,6 +83,9 @@ class EditNewsPostView(LoginRequiredMixin, UpdateView):
     template_name = 'news/edit_news_post.html'
     success_url = reverse_lazy('news_home')
     pk_url_kwarg = 'id'
+    def form_valid(self, form):
+        messages.success(self.request, "Post Update Successfully")
+        return super().form_valid(form)
 
 class DeleteNewsPostView(LoginRequiredMixin, DeleteView):
     model = NewsPost
@@ -86,4 +93,7 @@ class DeleteNewsPostView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('news_home')
     pk_url_kwarg = 'id'
     context_object_name = 'news_post'
+    def delete(self, request,*args,**kwargs):
+        messages.success(self.request, "Post Delete Successfully")
+        return super().delete(request,*args,**kwargs)
     

@@ -13,8 +13,12 @@ from django.views.generic import (
 )
 
 from .forms import PostForm, Registration_Form
+from django.core.paginator import Paginator
 from .models import Post
 from django.contrib import messages
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .serializers import PostSerializer
 
 
 # Create your views here.
@@ -23,8 +27,14 @@ class PostListView(ListView):
     model = Post
     template_name = "blog/home.html"
     context_object_name = "posts"
-    ordering = ["-created_at"]
-
+    ordering = ["-id", "-created_at"]
+    paginate_by=2
+# First API View
+class PostListAPIView(APIView):
+    def get(self, request):
+        posts = Post.objects.all().order_by('-created_at')
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data)
 
 class AboutView(TemplateView):
     template_name = "blog/about.html"

@@ -16,5 +16,6 @@ urlpatterns = [
     path("post/delete/<int:id>/", views.DeletePostView.as_view(), name="delete_post"),
     
     # Register User
-    path("register/", views.RegisterView.as_view(), name="register")
+    path("register/", views.RegisterView.as_view(), name="register"),
+    path('api/posts/', views.PostListAPIView.as_view(), name='api-post-list')
 ]

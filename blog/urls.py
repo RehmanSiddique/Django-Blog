@@ -17,5 +17,6 @@ urlpatterns = [
     
     # Register User
     path("register/", views.RegisterView.as_view(), name="register"),
-    path('api/posts/', views.PostListAPIView.as_view(), name='api-post-list')
+    path('api/posts/', views.PostListAPIView.as_view(), name='api-post-list'),
+    path('api/posts/<int:pk>/', views.PostDetailAPI.as_view(), name='api_post_detail')
 ]

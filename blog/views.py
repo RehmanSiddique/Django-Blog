@@ -18,6 +18,7 @@ from .models import Post
 from django.contrib import messages
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import status
 from .serializers import PostSerializer
 
 
@@ -35,6 +36,62 @@ class PostListAPIView(APIView):
         posts = Post.objects.all().order_by('-created_at')
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
+    def post(self, request):
+        serializer = PostSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class PostDetailAPI(APIView):
+
+    def get_object(self, pk):
+        try:
+            return Post.objects.get(pk=pk)
+        except Post.DoesNotExist:
+            return None
+
+    def get(self, request, pk):
+        post = self.get_object(pk)
+        if not post:
+            return Response({"error": "Post not found"}, status=404)
+
+        serializer = PostSerializer(post)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        post = self.get_object(pk)
+        if not post:
+            return Response({"error": "Post not found"}, status=404)
+
+        serializer = PostSerializer(post, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=400)
+
+    def patch(self, request, pk):
+        post = self.get_object(pk)
+        if not post:
+            return Response({"error": "Post not found"}, status=404)
+
+        serializer = PostSerializer(post, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=400)
+    
+
+    def delete(self, request, pk):
+        post = self.get_object(pk)
+        if not post:
+            return Response({"error": "Post not found"}, status=404)
+
+        post.delete()
+        return Response({"message": "Post deleted successfully"}, status=204)
+    
 
 class AboutView(TemplateView):
     template_name = "blog/about.html"

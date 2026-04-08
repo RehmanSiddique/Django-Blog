@@ -1,6 +1,10 @@
-from django.urls import path
+from django.urls import path,include
+
+from rest_framework.routers import DefaultRouter
 from  . import views 
 
+router = DefaultRouter()
+router.register(r'posts', views.PostViewSet)
 urlpatterns = [
     path('', views.PostListView.as_view(), name='home'),
     path('about/', views.AboutView.as_view(), name='about'),
@@ -17,6 +21,10 @@ urlpatterns = [
     
     # Register User
     path("register/", views.RegisterView.as_view(), name="register"),
+    # API Endpoints
     path('api/posts/', views.PostListCreateAPIView.as_view(), name='api-post-list'),
-    path('api/posts/<int:pk>/', views.PostRetrieveUpdateDestroyAPIView.as_view(), name='api_post_detail')
+    path('api/posts/<int:pk>/', views.PostRetrieveUpdateDestroyAPIView.as_view(), name='api_post_detail'),
+    # 
+    path('api/', include(router.urls)),
+
 ]

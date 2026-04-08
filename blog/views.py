@@ -114,7 +114,7 @@ class PostRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PostSerializer
 
 
-# 
+# Using ViewSet to handle all the CRUD operations for the Post model in a single class and it will automatically generate the appropriate methods for handling the different HTTP requests based on the actions defined in the viewset
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer

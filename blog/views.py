@@ -18,6 +18,8 @@ from .models import Post
 from django.contrib import messages
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from .permissions import IsOwnerOrReadOnly
 from rest_framework import viewsets
 from rest_framework import generics
 from rest_framework import status
@@ -34,6 +36,7 @@ class PostListView(ListView):
     paginate_by=2
 # First API View
 class PostListAPIView(APIView):
+    permission_classes = [IsAuthenticated]
     # Get method for API to retrieve the list of all posts in JSON format and it will return the list of posts in JSON format with the status code 200 if the request is successful otherwise it will return an error message in JSON format with the appropriate status code
     def get(self, request):
         posts = Post.objects.all().order_by('-created_at')
@@ -48,6 +51,8 @@ class PostListAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
      # Put method for API to update the entire post details by providing all the fields in the request body and it will replace the existing post details with the new details provided in the request body 
 class PostDetailAPI(APIView):
+    # permission_classes is used to specify the permissions required to access this API endpoint and in this case, it requires the user to be authenticated to access the post details API endpoint
+    permission_classes = [IsAuthenticated]
     # Helper method to get the post object based on the provided post id in the URL and if the post with the given id does not exist then it will return None
 
     def get_object(self, pk):
@@ -104,6 +109,7 @@ class PostDetailAPI(APIView):
 
 #  # LIST + CREATE
 class PostListCreateAPIView(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
@@ -118,6 +124,11 @@ class PostRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+
+    # Override the perform_create method to associate the created post with the currently authenticated user and it will set the author field of the post to the currently authenticated user when a new post is created through the API endpoint
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
 class AboutView(TemplateView):
     template_name = "blog/about.html"
